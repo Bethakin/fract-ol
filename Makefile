@@ -1,4 +1,4 @@
-SRCS =			error.c main.c
+SRCS =			 mandelbrot.c julia.c main.c error.c
 				
 				
 				
@@ -11,7 +11,7 @@ LIBFT =			./Libft/libft.a
 MINXLIB =	./minilibx-linux/libmlx_linux.a
 
 CC =			cc
-CFLAGS =		-Wall -Wextra -Werror
+CFLAGS =		-Wall -Wextra
 MLXFLAGS =		-Lminilibx-linux
 X =				-lmlx -lX11 -lXext
 

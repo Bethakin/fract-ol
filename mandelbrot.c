@@ -1,22 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   julia.c                                            :+:      :+:    :+:   */
+/*   madelbrot.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/21 00:18:28 by beinan            #+#    #+#             */
-/*   Updated: 2025/03/22 15:32:00 by beinan           ###   ########.fr       */
+/*   Created: 2025/03/21 00:04:30 by beinan            #+#    #+#             */
+/*   Updated: 2025/03/22 15:30:59 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
+#include <math.h>
+#include <float.h>
 #include "fractol.h"
 
-// int julia_iterations(double real_z, double imag_z, double real_c, double imag_c, int max_iterations)
+// int mandelbrot_iterations(double real_c, double imag_c, int max_iterations)
 // {
-//     double z_real = real_z;
-//     double z_imag = imag_z;
+//     double z_real = 0.0;
+//     double z_imag = 0.0;
 //     double z_real_squared, z_imag_squared;
 
 //     int i = 0;
@@ -31,10 +33,12 @@
 
 //         i++;
 //     }
+
 //     return 0;
 // }
+#include <float.h> 
 
-int julia_iterations(t_fractol *fractal)
+int mandelbrot_iterations(t_fractol *fractal)
 {
     double z_real;
     double z_imag;
@@ -42,44 +46,36 @@ int julia_iterations(t_fractol *fractal)
     double z_imag_squared;
     int i;
 
-    z_real = fractal->zx;
-    z_imag = fractal->zy;
+    z_real = 0.0;
+    z_imag = 0.0;
     i = 0;
     while (i < fractal->iter)
     {
         z_real_squared = z_real * z_real;
         z_imag_squared = z_imag * z_imag;
         if (z_real_squared + z_imag_squared > DBL_MAX)
-            return i;
+            return (i);
         z_imag = 2 * z_real * z_imag + fractal->cy;
         z_real = z_real_squared - z_imag_squared + fractal->cx;
+
         i++;
     }
-    return 0;
+    return (0);
 }
+// int main() {
+//     double real_c, imag_c;
 
-// int main(void)
-// {
-//     double real_z, imag_z, real_c, imag_c;
-
-//     // Kullanıcıdan z ve c karmaşık sayılarının reel ve sanal kısımlarını al
-//     printf("Bir z karmaşık sayısının reel kısmını girin (real_z): ");
-//     scanf("%lf", &real_z);
-//     printf("Bir z karmaşık sayısının sanal kısmını girin (imag_z): ");
-//     scanf("%lf", &imag_z);
-//     printf("Bir c karmaşık sayısının reel kısmını girin (real_c): ");
+//     printf("Bir karmaşık sayının reel kısmını girin (real_c): ");
 //     scanf("%lf", &real_c);
-//     printf("Bir c karmaşık sayısının sanal kısmını girin (imag_c): ");
+//     printf("Bir karmaşık sayının sanal kısmını girin (imag_c): ");
 //     scanf("%lf", &imag_c);
 
-//     // Julia iterasyon sayısını hesapla
-//     int result = julia_iterations(real_z, imag_z, real_c, imag_c, 60);
+//     int result = mandelbrot_iterations(real_c, imag_c, 60);
     
-//     // Sonucu ekrana yazdır
 //     if (result == 0) {
-//         printf("Verilen z noktası Julia setindedir (yakınsama).\n");
+//         printf("Verilen c noktası Mandelbrot setindedir (yakınsama).\n");
 //     } else {
-//         printf("Verilen z noktası %d. iterasyonda divergent oldu.\n", result);
+//         printf("Verilen c noktası %d. iterasyonda divergent oldu.\n", result);
 //     }
 
 //     return 0;

@@ -6,7 +6,7 @@
 /*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 01:42:40 by beinan            #+#    #+#             */
-/*   Updated: 2025/03/21 10:01:06 by beinan           ###   ########.fr       */
+/*   Updated: 2025/03/22 18:37:55 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ int is_it_julia(int ac, char **ag)
     return (0);
 }
 
-int is_error(int ac, char **ag, t_fractal *f) 
+int is_error(int ac, char **ag, t_fractol *f) 
 {
     if(is_it_mandel(ac, ag) == 1)
     {
@@ -202,6 +202,8 @@ int is_error(int ac, char **ag, t_fractal *f)
         f->name = 'j';
         f->x = 0;
         f->y = 0;
+        f->zx = string_to_double(ag[2]);
+        f->zy = string_to_double(ag[3]);
         f->color = 0x0721FF;
         f->iter = 35;
 		f->cx = -0.745429;

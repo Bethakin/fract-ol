@@ -6,14 +6,16 @@
 /*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:11:16 by beinan            #+#    #+#             */
-/*   Updated: 2025/03/21 10:00:01 by beinan           ###   ########.fr       */
+/*   Updated: 2025/03/22 17:44:24 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "/home/beinan/Desktop/fract-ol/minilibx-linux/mlx.h"
 #include "/home/beinan/Desktop/fract-ol/Libft/libft.h"
+#include <float.h>
+#include <math.h>
 
-typedef struct s_fractal
+typedef struct s_fractol
 {
 	//void	*mlx;
 	//void	*window;
@@ -29,26 +31,24 @@ typedef struct s_fractal
 	double	cx;
 	double	cy;
 	int		color;
+	int 	width;
+	int 	height;
 	double	offset_x;
 	double	offset_y;
-	//double	zoom;
-	char	name;
 	int		iter;
-// }			t_fractal;
-
-// typedef struct s_image
-// {
+	double	zoom;
+	char	name;
 	void	*mlx;
 	void	*win;
-	int		zoom;	
 	void	*image;
+	int		*color_palette;
 	void	*pointer_to_image;
 	int		bits_per_pixel;
 	int		size_line;
 	int		endian;
-}			t_fractal;
+}			t_fractol;
 
-
-
+int julia_iterations(t_fractol *fractal);
+int mandelbrot_iterations(t_fractol *fractal);
 int	ft_tolower(int c);
-int is_error(int ac, char **ag, t_fractal *f) ;
+int is_error(int ac, char **ag, t_fractol *f) ;
