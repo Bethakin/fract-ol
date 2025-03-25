@@ -14,11 +14,12 @@ CC =			cc
 CFLAGS =		-Wall -Wextra
 MLXFLAGS =		-Lminilibx-linux
 X =				-lmlx -lX11 -lXext
+MATH =			-lm
 
 all:			$(LIBFT) $(EXE_NAME)
 
 $(EXE_NAME):	$(OBJS) $(LIBFT) $(MINXLIB)
-				$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(EXE_NAME) $(MLXFLAGS) $(X)
+				$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(EXE_NAME) $(MLXFLAGS) $(X) $(MATH) -o $@
 
 $(LIBFT):
 				make -C ./Libft all

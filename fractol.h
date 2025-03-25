@@ -6,7 +6,7 @@
 /*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:11:16 by beinan            #+#    #+#             */
-/*   Updated: 2025/03/22 17:44:24 by beinan           ###   ########.fr       */
+/*   Updated: 2025/03/25 14:31:32 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "/home/beinan/Desktop/fract-ol/Libft/libft.h"
 #include <float.h>
 #include <math.h>
+#include <stdlib.h>
 
 typedef struct s_fractol
 {
@@ -46,6 +47,7 @@ typedef struct s_fractol
 	int		bits_per_pixel;
 	int		size_line;
 	int		endian;
+	void	 (*cleanup)(struct s_fractol *f);
 }			t_fractol;
 
 int julia_iterations(t_fractol *fractal);

@@ -6,7 +6,7 @@
 /*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 17:04:47 by beinan            #+#    #+#             */
-/*   Updated: 2025/03/22 18:52:41 by beinan           ###   ########.fr       */
+/*   Updated: 2025/03/25 14:31:16 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,31 @@
 #include <stdlib.h> // For exit()
 #include <stdio.h>  // For fprintf()
 
+void clean_exit(t_fractol *f)
+{
+    if (f->image)
+        mlx_destroy_image(f->mlx, f->image);
+    if (f->win)
+        mlx_destroy_window(f->mlx, f->win);
+    mlx_destroy_display(f->mlx);
+    free(f->mlx);
+    exit(0);
+}
+
 void init_fractal(t_fractol *fractal)
 {
     fractal->x = 0;
     fractal->y = 0;
 
-    fractal->cx = -0.7; // Example value for Julia
-    fractal->cy = 0.23; // Example value for Julia
+    // fractal->cx = -0.7; // Example value for Julia
+    // fractal->cy = 0.23; // Example value for Julia
     fractal->color = 0xFFFFFF; // Default color (white)
     fractal->offset_x = 0.0;
     fractal->offset_y = 0.0;
-    fractal->iter = 50;
+    fractal->iter = 40;
     fractal->zoom = 0.005;
     fractal->width = 1520; // Example window width
     fractal->height = 1080; // Example window height
-    // Initialize MiniLibX
     fractal->mlx = mlx_init();
     if (!fractal->mlx)
     {
@@ -63,6 +73,7 @@ void init_fractal(t_fractol *fractal)
     // Initialize fractal-specific data
 
     // Optional: Initialize color palette
+    fractal->cleanup = clean_exit;
     fractal->color_palette = NULL; // You can initialize this later if needed
 }
 void init_image(t_fractol *fractol)
@@ -159,17 +170,48 @@ void put_pixel_to_image(t_fractol *fractol, int x, int y, int color)
 //     return palette[index % palette_size];
 // }
 
+// int get_color(int iterations, int max_iterations)
+// {
+//     if (iterations == max_iterations)
+//         return 0x000000;
+
+//     int r = (int)(255 * ((double)iterations / max_iterations));
+//     int g = (int)(255 * (0.6 - (double)iterations / max_iterations));
+//     int b = (int)(255 * (0.8 - (double)iterations / max_iterations));
+
+//     return (r << 16) | (g << 8) | b; // Combine into RGB color
+// }
+#include <math.h> // For smooth coloring
+
 int get_color(int iterations, int max_iterations)
 {
+    // Points that reached max iterations (convergent) are black
     if (iterations == max_iterations)
-        return 0x000000;
+        return 0x000000; // Black
 
-    int r = (int)(255 * ((double)iterations / max_iterations));
-    int g = (int)(255 * (0.6 - (double)iterations / max_iterations));
-    int b = (int)(255 * (0.8 - (double)iterations / max_iterations));
+    // Smooth coloring for divergent points
+    double t = (double)iterations / max_iterations;
+    t = sqrt(t); // Smooth the gradient
 
-    return (r << 16) | (g << 8) | b; // Combine into RGB color
+    // Color gradient: blue -> cyan -> white
+    int r = (int)(9 * (1 - t) * t * t * t * 255);
+    int g = (int)(15 * (1 - t) * (1 - t) * t * t * 255);
+    int b = (int)(8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255);
+
+    return (r << 16) | (g << 8) | b;
 }
+// int get_color(int iterations, int max_iter)
+// {
+//     if (iterations == max_iter)
+//         return 0x000000;
+    
+//     // Simple smooth coloring without sqrt
+//     double ratio = (double)iterations/max_iter;
+//     int color = (int)(255 * ratio * ratio); // Squaring gives some smoothing
+    
+//     // Blue gradient example
+//     return (color << 16) | (color << 8) | 255;
+// }
 
 // void draw_fractal(t_fractol *fractal)
 // {
@@ -197,6 +239,47 @@ int get_color(int iterations, int max_iterations)
 //     }
 //     mlx_put_image_to_window(fractal->mlx, fractal->win, fractal->image, 0, 0);
 // }
+// void draw_fractal(t_fractol *fractal)
+// {
+//     int x, y;
+//     int color;
+//     int iterations;
+
+//     for (y = 0; y < fractal->height; y++)
+//     {
+//         for (x = 0; x < fractal->width; x++)
+//         {
+//             // Map pixel coordinates to the complex plane
+//             double real = (x - fractal->width / 2.0) * fractal->zoom;
+//             double imag = (y - fractal->height / 2.0) * fractal->zoom;
+
+//             if (fractal->name == 'm') // Mandelbrot
+//             {    
+//                 // fractal->zx = 0.0;
+//                 // fractal->zy = 0.0;
+
+//                 fractal->cx = real; // Set c to the pixel coordinates
+//                 fractal->cy = imag;
+//                 iterations = mandelbrot_iterations(fractal);
+//             }
+//             else if (fractal->name == 'j') // Julia
+//             {
+//                 fractal->cx = real; // Set z to the pixel coordinates
+//                 fractal->cy = imag;
+//                 iterations = julia_iterations(fractal);
+//             }
+
+//             // Map iterations to a color
+//             color = get_color(iterations, fractal->iter);
+
+//             // Draw the pixel to the image buffer
+//             put_pixel_to_image(fractal, x, y, color);
+//         }
+//     }
+
+//     // Display the image in the window
+//     mlx_put_image_to_window(fractal->mlx, fractal->win, fractal->image, 0, 0);
+// }
 void draw_fractal(t_fractol *fractal)
 {
     int x, y;
@@ -207,49 +290,43 @@ void draw_fractal(t_fractol *fractal)
     {
         for (x = 0; x < fractal->width; x++)
         {
-            // Map pixel coordinates to the complex plane
-            double real = (x - fractal->width / 2.0) * fractal->zoom + fractal->offset_x;
-            double imag = (y - fractal->height / 2.0) * fractal->zoom + fractal->offset_y;
+            // Map pixel coordinates to the complex plane (starting z for Julia)
+            fractal->zx = (x - fractal->width / 2.0) * fractal->zoom;
+            fractal->zy = (y - fractal->height / 2.0) * fractal->zoom;
 
-            if (fractal->name == 'm') // Mandelbrot
-            {    
-                // fractal->zx = 0.0;
-                // fractal->zy = 0.0;
+            if (fractal->name == 'm')
+            {
 
-                fractal->cx = real; // Set c to the pixel coordinates
-                fractal->cy = imag;
+                fractal->cx = fractal->zx; // Set c to the pixel coordinates
+                fractal->cy = fractal->zy;                
+                fractal->zx = 0.0;
+                fractal->zy = 0.0;
+
                 iterations = mandelbrot_iterations(fractal);
             }
-            else if (fractal->name == 'j') // Julia
-            {
-                fractal->cx = real; // Set z to the pixel coordinates
-                fractal->cy = imag;
+               
+            else if (fractal->name == 'j')
                 iterations = julia_iterations(fractal);
-            }
 
-            // Map iterations to a color
             color = get_color(iterations, fractal->iter);
-
-            // Draw the pixel to the image buffer
             put_pixel_to_image(fractal, x, y, color);
         }
     }
-
-    // Display the image in the window
     mlx_put_image_to_window(fractal->mlx, fractal->win, fractal->image, 0, 0);
 }
 
-int key_hook(int keycode, t_fractol *fractol)
+int keyhook(int keycode, t_fractol *fractol)
 {
-    if (keycode == 53) // ESC key
+    if (keycode == 65307) // ESC key
+    {
+        fractol->cleanup(fractol);
         exit(0);
-    else if (keycode == 24) // '+' key to increase iterations
+    }
+    else if (keycode == 101) // '+' key to increase iterations
         fractol->iter += 10;
-    else if (keycode == 27) // '-' key to decrease iterations
+    else if (keycode == 114) // '-' key to decrease iterations
         fractol->iter -= 10;
-
-    // Redraw the fractal
-    draw_fractal(fractol); // Assuming `img` is accessible here
+    draw_fractal(fractol);
     return 0;
 }
 
@@ -257,13 +334,11 @@ int mouse_hook(int button, int x, int y, t_fractol *fractol)
 {
     (void) x;
     (void) y;
-    if (button == 4) // Scroll up (zoom in)
+    if (button == 4)
         fractol->zoom *= 0.9;
-    else if (button == 5) // Scroll down (zoom out)
+    else if (button == 5)
         fractol->zoom *= 1.1;
-
-    // Redraw the fractal
-    draw_fractal(fractol); // Assuming `img` is accessible here
+    draw_fractal(fractol);
     return 0;
 }
 // int key_hook(int keycode, t_fractol *fractol)
@@ -280,13 +355,14 @@ int mouse_hook(int button, int x, int y, t_fractol *fractol)
 //     return 0;
 // }
 
-int keyhook(int key, t_fractol *a)
-{
-	a->x=0;
-	if(key == 65307)
-		exit(0);
-	return(0);
-}
+// int keyhook(int key, t_fractol *a)
+// {
+// 	a->x=0;
+//     // printf("%d\n", key);
+// 	if(key == 65307)
+// 		exit(0);
+// 	return(0);
+// }
 // int closehook(int key, t_fractal *a)
 // {
 // 	key = 0;
@@ -294,13 +370,22 @@ int keyhook(int key, t_fractol *a)
 // 	exit(1);
 // 	return(key);
 // }
-int closehook(int keycode)
+int closehook(t_fractol *f)
 {
-    //mlx_destroy_window(f.mlx, f.win);  // Pencereyi yok et
-    //free(fractal);  // Belleği serbest bırak
-    exit(0);  // Programı düzgün şekilde sonlandır
-    return (keycode);
+    // if (f->image)
+    //     mlx_destroy_image(f->mlx, f->image);
+    // if (f->win)
+    //     mlx_destroy_window(f->mlx, f->win);
+    // //mlx_loop_end(f->mlx);
+    // mlx_destroy_display(f->mlx);
+    // free(f->mlx);
+    // exit(0);
+    f->cleanup(f);
+    //mlx_destroy_window(f.mlx, f.win);
+    //free(fractal);
+    exit(0);
 }
+
 
 int main(int ac, char **ag)
 {
@@ -309,7 +394,7 @@ int main(int ac, char **ag)
 
 	if (is_error(ac, ag, &fractol) == 0)
 	{
-		return (0);
+		exit(1);
 	}
     // Initialize fractal parameters
     // fractol.width = 800;
@@ -321,20 +406,12 @@ int main(int ac, char **ag)
     // fractol.cx = -0.7; // Example value for Julia
     // fractol.cy = 0.23; // Example value for Julia
 
-    // Initialize MiniLibX and create the image
     init_fractal(&fractol);
-
-    // Draw the fractal
     draw_fractal(&fractol);
-
-    // Set up event hooks
 	mlx_hook(fractol.win, 17, 0, closehook, &fractol);
 	mlx_hook(fractol.win, 2, 1, keyhook, &fractol);
-
     mlx_mouse_hook(fractol.win, mouse_hook, &fractol);
-
-    // Start the event loop
     mlx_loop(fractol.mlx);
-
     return 0;
 }
+//image window display
