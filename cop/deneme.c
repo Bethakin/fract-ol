@@ -53,7 +53,116 @@ typedef struct s_img
 	int		endian;
 	int		line_len;
 }				t_img;
+// int is_valid_double(const char *str)
+// {
+//     int i = 0;
+//     int has_digit = 0;
+//     int has_dot = 0;
+//     int has_exp = 0;
+//     int sign = 0;
 
+//     if (str == NULL || *str == '\0')
+//         return 0;
+//     if (str[i] == '+' || str[i] == '-')
+//     {
+//         sign = 1;
+//         i++;
+//     }
+//     double integer_part = 0.0;
+//     while (str[i] >= '0' && str[i] <= '9')
+//     {
+//         has_digit = 1;
+//         integer_part = integer_part * 10 + (str[i] - '0');
+//         i++;
+//     }
+//     double fractional_part = 0.0;
+//     double fractional_weight = 1.0;
+//     if (str[i] == '.') 
+//     {
+//         has_dot = 1;
+//         i++;
+//         while (str[i] >= '0' && str[i] <= '9') 
+//         {
+//             has_digit = 1;
+//             fractional_weight /= 10.0;
+//             fractional_part += (str[i] - '0') * fractional_weight;
+//             i++;
+//         }
+//     }
+//     int exp_sign = 1;
+//     int exponent = 0;
+//     if (str[i] == 'e' || str[i] == 'E') 
+//     {
+//         has_exp = 1;
+//         i++;
+//         if (str[i] == '+' || str[i] == '-')
+//         {
+//             if (str[i] == '-')
+//                 exp_sign = -1;
+//             i++;
+//         }
+//         while (str[i] >= '0' && str[i] <= '9') 
+//         {
+//             exponent = exponent * 10 + (str[i] - '0');
+//             i++;
+//         }
+//     }
+//     if (str[i] != '\0')
+//         return 0;
+//     if (!has_digit)
+//         return 0;
+//     double value = (integer_part + fractional_part) * power(10.0, exp_sign * exponent);
+//     if (value < -DBL_MAX || value > DBL_MAX)
+//         return 0;
+//     return 1;
+// }
+// double string_to_double(const char *str)
+// {
+//     int i = 0;
+//     int sign = 1;
+//     double integer_part = 0.0;
+//     double fractional_part = 0.0;
+//     double fractional_weight = 1.0;
+//     int exponent = 0;
+//     int exp_sign = 1;
+
+//     if (str == NULL || *str == '\0')
+//         return 0.0;
+//     if (str[i] == '+' || str[i] == '-') {
+//         if (str[i] == '-') {
+//             sign = -1;
+//         }
+//         i++;
+//     }
+//     while (str[i] >= '0' && str[i] <= '9') {
+//         integer_part = integer_part * 10 + (str[i] - '0');
+//         i++;
+//     }
+//     if (str[i] == '.') {
+//         i++;
+//         while (str[i] >= '0' && str[i] <= '9') {
+//             fractional_weight /= 10.0;
+//             fractional_part += (str[i] - '0') * fractional_weight;
+//             i++;
+//         }
+//     }
+//     if (str[i] == 'e' || str[i] == 'E') {
+//         i++;
+//         if (str[i] == '+' || str[i] == '-') {
+//             if (str[i] == '-') {
+//                 exp_sign = -1;
+//             }
+//             i++;
+//         }
+//         while (str[i] >= '0' && str[i] <= '9')
+//         {
+//             exponent = exponent * 10 + (str[i] - '0');
+//             i++;
+//         }
+//     }
+//     double value = (integer_part + fractional_part) * power(10.0, exp_sign * exponent);
+//     return sign * value;
+// }
 /*
  * This struct contains all the mlx stuff
  * and the image where i will buffer my pixels

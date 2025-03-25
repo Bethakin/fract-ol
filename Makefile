@@ -1,7 +1,5 @@
-SRCS =			 mandelbrot.c julia.c main.c error.c
-				
-				
-				
+SRCS =			 mandelbrot.c julia.c main.c error.c is_valid.c str_doub.c draw.c
+		
 OBJS =			$(SRCS:.c=.o)
 
 EXE_NAME =		fractol
